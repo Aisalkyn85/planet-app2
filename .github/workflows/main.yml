@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Verify secrets
+      # 2. Verify all required secrets
       - name: Verify required secrets
         run: |
           echo "Checking secrets..."
@@ -25,10 +25,10 @@ jobs:
           if [ -z "${{ secrets.EC2_USER }}" ]; then echo "ERROR: EC2_USER is missing in GitHub secrets"; missing=true; fi
           if [ -z "${{ secrets.EC2_KEY }}" ]; then echo "ERROR: EC2_KEY is missing in GitHub secrets"; missing=true; fi
           if [ "$missing" = true ]; then exit 1; fi
-          echo "All required secrets are available."
+          echo "✅ All required secrets are available."
 
       # 3. Log in to Docker Hub
-      - name: Docker Hub Login
+      - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -37,22 +37,18 @@ jobs:
       # 4. Build and push Docker image
       - name: Build and Push Docker Image
         run: |
-          echo "Building Docker image..."
           docker build -t ${{ secrets.DOCKER_USERNAME }}/planet-app2:latest .
-          echo "Pushing image to Docker Hub..."
           docker push ${{ secrets.DOCKER_USERNAME }}/planet-app2:latest
 
       # 5. Save EC2 private key
-      - name: Save EC2 SSH key
+      - name: Save EC2 private key
         run: |
-          echo "Setting up EC2 SSH key..."
           echo "${{ secrets.EC2_KEY }}" > ec2_key.pem
           chmod 600 ec2_key.pem
 
       # 6. Deploy container on EC2
       - name: Deploy to EC2
         run: |
-          echo "Deploying to EC2..."
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
             docker pull ${{ secrets.DOCKER_USERNAME }}/planet-app2:latest &&
             docker stop planet-app2 || true &&
