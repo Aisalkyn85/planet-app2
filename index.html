@@ -1,15 +1,3 @@
-<?php
-$planets = [
-    ["name" => "Mercury", "description" => "The smallest planet, closest to the Sun."],
-    ["name" => "Venus", "description" => "The hottest planet, often called Earth's twin."],
-    ["name" => "Earth", "description" => "Our home planet, the only known planet with life."],
-    ["name" => "Mars", "description" => "The Red Planet, known for its dusty surface."],
-    ["name" => "Jupiter", "description" => "The largest planet, a gas giant with a Great Red Spot."],
-    ["name" => "Saturn", "description" => "Famous for its stunning ring system."],
-    ["name" => "Uranus", "description" => "An ice giant that rotates on its side."],
-    ["name" => "Neptune", "description" => "A windy, icy planet with deep blue color."]
-];
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,12 +50,38 @@ $planets = [
     <header>🌌 Planets in Our Solar System</header>
     <main>
         <ul>
-            <?php foreach($planets as $planet): ?>
-                <li>
-                    <div class="planet-name"><?= $planet['name']; ?></div>
-                    <div class="description"><?= $planet['description']; ?></div>
-                </li>
-            <?php endforeach; ?>
+            <li>
+                <div class="planet-name">Mercury</div>
+                <div class="description">The smallest planet, closest to the Sun.</div>
+            </li>
+            <li>
+                <div class="planet-name">Venus</div>
+                <div class="description">The hottest planet, often called Earth's twin.</div>
+            </li>
+            <li>
+                <div class="planet-name">Earth</div>
+                <div class="description">Our home planet, the only known planet with life.</div>
+            </li>
+            <li>
+                <div class="planet-name">Mars</div>
+                <div class="description">The Red Planet, known for its dusty surface.</div>
+            </li>
+            <li>
+                <div class="planet-name">Jupiter</div>
+                <div class="description">The largest planet, a gas giant with a Great Red Spot.</div>
+            </li>
+            <li>
+                <div class="planet-name">Saturn</div>
+                <div class="description">Famous for its stunning ring system.</div>
+            </li>
+            <li>
+                <div class="planet-name">Uranus</div>
+                <div class="description">An ice giant that rotates on its side.</div>
+            </li>
+            <li>
+                <div class="planet-name">Neptune</div>
+                <div class="description">A windy, icy planet with deep blue color.</div>
+            </li>
         </ul>
     </main>
 </body>
