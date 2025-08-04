@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for Planet App
+name: Planet App CI/CD
 
 on:
   push:
@@ -10,41 +10,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repository
+      # 1. Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Log in to Docker Hub
-      - name: Docker login
-        uses: docker/login-action@v3
+      # 2. Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 3. Build Docker image
-      - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/planet-app2:latest .
+      # 3. Build and push image to Docker Hub
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/planet-app2:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/planet-app2:latest
 
-      # 4. Push Docker image to Docker Hub
-      - name: Push Docker image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/planet-app2:latest
-
-      # 5. Deploy to EC2 via SSH
+      # 4. Deploy to EC2 via SSH
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            echo "Stopping and removing old container if it exists..."
-            docker stop planet-app2 || true
-            docker rm planet-app2 || true
-
-            echo "Pulling latest Docker image..."
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/planet-app2:latest
-
-            echo "Running new container on port 80..."
-            docker run -d -p 80:80 --name planet-app2 ${{ secrets.DOCKERHUB_USERNAME }}/planet-app2:latest
-
-            echo "Deployment completed successfully!"
+            docker stop planet-container || true
+            docker rm planet-container || true
+            docker pull ${{ secrets.DOCKER_USERNAME }}/planet-app2:latest
+            docker run -d -p 80:80 --name planet-container ${{ secrets.DOCKER_USERNAME }}/planet-app2:latest
